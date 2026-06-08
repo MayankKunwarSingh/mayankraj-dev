@@ -190,7 +190,7 @@ export function Hero3DScene() {
           far={4} 
         />
         
-        <EffectComposer disableNormalPass multisampling={4}>
+        <EffectComposer multisampling={4}>
           <Bloom luminanceThreshold={0.5} mipmapBlur luminanceSmoothing={0.3} intensity={1.2} />
           <DepthOfField focusDistance={0.02} focalLength={0.05} bokehScale={3} height={480} />
           <Noise opacity={0.03} />

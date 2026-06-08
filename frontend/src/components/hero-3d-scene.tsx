@@ -1,14 +1,14 @@
 "use client";
 
-import { useMemo, useRef } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
-  Float,
-  Stars, 
-  MeshTransmissionMaterial,
   ContactShadows,
+  Float,
+  MeshTransmissionMaterial,
+  Stars,
 } from "@react-three/drei";
-import { EffectComposer, Bloom, DepthOfField, Noise, Vignette } from "@react-three/postprocessing";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 const themeColors = {
@@ -28,7 +28,7 @@ function createSeededRandom(seed = 42) {
   };
 }
 
-function PremiumCore() {
+function PremiumCore({ reduceQuality }: { reduceQuality: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const innerRef = useRef<THREE.Mesh>(null);
   
@@ -49,12 +49,12 @@ function PremiumCore() {
   return (
     <Float speed={1.5} rotationIntensity={0.24} floatIntensity={0.45}>
       <mesh ref={meshRef} scale={1.55}>
-        <torusKnotGeometry args={[1, 0.3, 256, 32]} />
+        <torusKnotGeometry args={[1, 0.3, reduceQuality ? 100 : 200, reduceQuality ? 16 : 32]} />
         <MeshTransmissionMaterial 
-          backside
-          backsideThickness={3}
+          backside={!reduceQuality}
+          backsideThickness={1.5}
           thickness={1.35}
-          roughness={0.08}
+          roughness={0.15}
           transmission={1}
           ior={1.42}
           chromaticAberration={0.06}
@@ -62,11 +62,12 @@ function PremiumCore() {
           color={themeColors.white}
           attenuationColor={themeColors.cyan}
           attenuationDistance={1.25}
+          resolution={reduceQuality ? 256 : 512}
         />
       </mesh>
       
       <mesh ref={innerRef} scale={0.72}>
-        <icosahedronGeometry args={[1, 2]} />
+        <icosahedronGeometry args={[1, reduceQuality ? 1 : 2]} />
         <meshBasicMaterial color={themeColors.cyan} transparent opacity={0.34} />
         <pointLight intensity={2.2} color={themeColors.cyan} distance={6} />
       </mesh>
@@ -74,7 +75,7 @@ function PremiumCore() {
   );
 }
 
-function OrbitRings() {
+function OrbitRings({ reduceQuality }: { reduceQuality: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
@@ -96,7 +97,7 @@ function OrbitRings() {
             index * 0.5,
           ]}
         >
-          <torusGeometry args={[radius, 0.008, 12, 180]} />
+          <torusGeometry args={[radius, 0.008, reduceQuality ? 8 : 12, reduceQuality ? 64 : 128]} />
           <meshBasicMaterial
             color={[themeColors.cyan, themeColors.indigo, themeColors.violet][index]}
             transparent
@@ -136,16 +137,17 @@ function DataPanels() {
   );
 }
 
-function CinematicParticles({ count = 150 }) {
+function CinematicParticles({ count = 150, reduceQuality = false }: { count?: number, reduceQuality?: boolean }) {
   const mesh = useRef<THREE.InstancedMesh>(null);
   const { viewport } = useThree();
 
   const dummy = useMemo(() => new THREE.Object3D(), []);
+  const actualCount = reduceQuality ? Math.floor(count / 2.5) : count;
   
   const particles = useMemo(() => {
     const random = createSeededRandom(124);
     const temp = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < actualCount; i++) {
       const t = random() * 100;
       const factor = 8 + random() * 36;
       const speed = 0.0025 + random() / 700;
@@ -157,17 +159,17 @@ function CinematicParticles({ count = 150 }) {
       temp.push({ t, factor, speed, xFactor, yFactor, zFactor, mx: 0, my: 0, color });
     }
     return temp;
-  }, [count]);
+  }, [actualCount]);
 
   const colorArray = useMemo(() => {
-    const arr = new Float32Array(count * 3);
+    const arr = new Float32Array(actualCount * 3);
     const c = new THREE.Color();
     particles.forEach((p, i) => {
       c.set(p.color);
       c.toArray(arr, i * 3);
     });
     return arr;
-  }, [particles, count]);
+  }, [particles, actualCount]);
 
   useFrame((state) => {
     particles.forEach((particle, i) => {
@@ -180,8 +182,8 @@ function CinematicParticles({ count = 150 }) {
       const s = Math.cos(t) * 0.5 + 0.5;
 
       // Smooth mouse follow
-      particle.mx += (state.pointer.x * viewport.width * 0.5 - particle.mx) * 0.02;
-      particle.my += (state.pointer.y * viewport.height * 0.5 - particle.my) * 0.02;
+      particle.mx += (state.pointer.x * viewport.width * 0.5 - particle.mx) * 0.05;
+      particle.my += (state.pointer.y * viewport.height * 0.5 - particle.my) * 0.05;
 
       dummy.position.set(
         (particle.mx / 5) + a + xFactor + Math.cos((t / 10) * factor) + (Math.sin(t * 1) * factor) / 10,
@@ -201,8 +203,8 @@ function CinematicParticles({ count = 150 }) {
   });
 
   return (
-    <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[0.04, 16, 16]}>
+    <instancedMesh ref={mesh} args={[undefined, undefined, actualCount]}>
+      <sphereGeometry args={[0.04, reduceQuality ? 8 : 16, reduceQuality ? 8 : 16]}>
         <instancedBufferAttribute attach="attributes-color" args={[colorArray, 3]} />
       </sphereGeometry>
       <meshStandardMaterial 
@@ -218,13 +220,13 @@ function CinematicParticles({ count = 150 }) {
 }
 
 // Lighting Setup for Premium Reflections
-function LightingSetup() {
+function LightingSetup({ reduceQuality }: { reduceQuality: boolean }) {
   const { pointer } = useThree();
   const mouseLight = useRef<THREE.PointLight>(null);
   const target = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(() => {
-    if (mouseLight.current) {
+    if (mouseLight.current && !reduceQuality) {
       target.set(pointer.x * 8, pointer.y * 7, 5);
       mouseLight.current.position.lerp(target, 0.08);
     }
@@ -234,7 +236,9 @@ function LightingSetup() {
     <>
       <ambientLight intensity={0.28} />
       <directionalLight position={[10, 20, 10]} intensity={1.35} color={themeColors.white} />
-      <pointLight ref={mouseLight} intensity={2.5} color={themeColors.cyan} distance={15} />
+      {!reduceQuality && (
+        <pointLight ref={mouseLight} intensity={2.5} color={themeColors.cyan} distance={15} />
+      )}
       <spotLight position={[-8, -6, -8]} intensity={1.7} color={themeColors.violet} />
       <rectAreaLight
         position={[7, 4, 5]}
@@ -256,7 +260,7 @@ function LightingSetup() {
   );
 }
 
-function HeroRig() {
+function HeroRig({ reduceQuality }: { reduceQuality: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const { pointer, viewport } = useThree();
 
@@ -265,52 +269,69 @@ function HeroRig() {
     const t = state.clock.getElapsedTime();
     const desktopOffset = viewport.width > 9 ? 2.4 : 0;
 
-    groupRef.current.position.x += (desktopOffset + pointer.x * 0.24 - groupRef.current.position.x) * 0.035;
-    groupRef.current.position.y += (pointer.y * 0.18 - groupRef.current.position.y) * 0.035;
-    groupRef.current.rotation.y += (pointer.x * 0.12 - groupRef.current.rotation.y) * 0.035;
-    groupRef.current.rotation.x += (pointer.y * -0.08 - groupRef.current.rotation.x) * 0.035;
+    groupRef.current.position.x += (desktopOffset + pointer.x * 0.24 - groupRef.current.position.x) * 0.05;
+    groupRef.current.position.y += (pointer.y * 0.18 - groupRef.current.position.y) * 0.05;
+    groupRef.current.rotation.y += (pointer.x * 0.12 - groupRef.current.rotation.y) * 0.05;
+    groupRef.current.rotation.x += (pointer.y * -0.08 - groupRef.current.rotation.x) * 0.05;
     groupRef.current.position.z = Math.sin(t * 0.28) * 0.18;
   });
 
   return (
     <group ref={groupRef}>
-      <OrbitRings />
-      <PremiumCore />
+      <OrbitRings reduceQuality={reduceQuality} />
+      <PremiumCore reduceQuality={reduceQuality} />
       <DataPanels />
     </group>
   );
 }
 
 export function Hero3DScene() {
+  const [reduceQuality, setReduceQuality] = useState(false);
+
+  useEffect(() => {
+    const checkQuality = () => {
+      const isMobile = window.innerWidth < 768;
+      const isLowPerf = (navigator.hardwareConcurrency || 4) <= 4;
+      setReduceQuality(isMobile || isLowPerf);
+    };
+    checkQuality();
+    window.addEventListener("resize", checkQuality, { passive: true });
+    return () => window.removeEventListener("resize", checkQuality);
+  }, []);
+
   return (
     <div className="hero-3d-scene absolute inset-0 z-0 pointer-events-none opacity-95" aria-hidden="true">
       <Canvas
         camera={{ position: [0, 0, 10], fov: 36 }}
-        dpr={[1, 1.75]}
-        gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+        dpr={[1, reduceQuality ? 1.2 : 1.75]}
+        gl={{ alpha: true, antialias: !reduceQuality, powerPreference: "high-performance" }}
       >
         <color attach="background" args={[themeColors.background]} />
-        <LightingSetup />
+        <LightingSetup reduceQuality={reduceQuality} />
         
-        <HeroRig />
+        <HeroRig reduceQuality={reduceQuality} />
         
-        <CinematicParticles count={180} />
+        <CinematicParticles count={180} reduceQuality={reduceQuality} />
         
-        <Stars radius={45} depth={36} count={2400} factor={2.6} saturation={0.6} fade speed={0.6} />
+        <Stars radius={45} depth={36} count={reduceQuality ? 800 : 2000} factor={reduceQuality ? 3 : 2.6} saturation={0.6} fade speed={reduceQuality ? 0.2 : 0.6} />
         
-        <ContactShadows 
-          position={[0, -3, 0]} 
-          opacity={0.28} 
-          scale={16} 
-          blur={2.5} 
-          far={4} 
-        />
+        {!reduceQuality && (
+          <ContactShadows 
+            position={[0, -3, 0]} 
+            opacity={0.28} 
+            scale={16} 
+            blur={2.5} 
+            far={4} 
+            resolution={256}
+            frames={1}
+          />
+        )}
         
-        <EffectComposer multisampling={2}>
-          <Bloom luminanceThreshold={0.36} mipmapBlur luminanceSmoothing={0.28} intensity={0.85} />
-          <DepthOfField focusDistance={0.028} focalLength={0.042} bokehScale={2.2} height={480} />
-          <Noise opacity={0.025} />
-          <Vignette eskil={false} offset={0.18} darkness={0.95} />
+        <EffectComposer multisampling={reduceQuality ? 0 : 2}>
+          <Bloom luminanceThreshold={0.4} mipmapBlur luminanceSmoothing={0.3} intensity={0.7} />
+          {!reduceQuality && (
+            <Vignette eskil={false} offset={0.18} darkness={0.95} />
+          )}
         </EffectComposer>
       </Canvas>
     </div>

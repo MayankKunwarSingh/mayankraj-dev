@@ -1,41 +1,43 @@
 "use client";
 
-import { Hero3DScene } from "@/components/hero-3d-scene";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-    AnimatePresence,
-    motion,
-    useMotionValue,
-    useSpring,
-    useTransform,
-    useScroll,
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
 } from "framer-motion";
 import gsap from "gsap";
 import Lenis from "lenis";
-import Lottie from "lottie-react";
 import {
-    ArrowDown,
-    Bot,
-    BriefcaseBusiness,
-    ChevronRight,
-    Code2,
-    Command,
-    Download,
-    ExternalLink,
-    Globe2,
-    GraduationCap,
-    Mail,
-    Menu,
-    Moon,
-    Send,
-    Sparkles,
-    Sun,
-    Trophy,
-    X,
+  ArrowDown,
+  Bot,
+  BriefcaseBusiness,
+  ChevronRight,
+  Code2,
+  Command,
+  Download,
+  ExternalLink,
+  Globe2,
+  GraduationCap,
+  Mail,
+  Menu,
+  Moon,
+  Send,
+  Sparkles,
+  Sun,
+  Trophy,
+  X,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+
+const Hero3DScene = dynamic(() => import("@/components/hero-3d-scene").then(mod => mod.Hero3DScene), { ssr: false });
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const roles = [
   "Software Developer",

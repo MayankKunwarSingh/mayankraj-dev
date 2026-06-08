@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Mayank Raj icon">
+  <rect width="512" height="512" rx="96" fill="#05070f"/>
+  <circle cx="372" cy="128" r="88" fill="#38bdf8" opacity=".22"/>
+  <circle cx="144" cy="384" r="108" fill="#34d399" opacity=".18"/>
+  <path d="M118 337V175h47l52 84 52-84h47v162h-45v-91l-41 66h-26l-41-66v91h-45Z" fill="#fff"/>
+  <path d="M330 337V175h70c38 0 66 24 66 60 0 25-13 45-35 55l43 47h-55l-35-40h-8v40h-46Zm46-78h20c15 0 24-9 24-23s-9-23-24-23h-20v46Z" fill="#38bdf8"/>
+</svg>

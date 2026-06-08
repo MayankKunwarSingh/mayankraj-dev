@@ -1,0 +1,168 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources 5 0 R >>
+endobj
+
+4 0 obj
+<< /Length 2500 >>
+stream
+BT
+/F1 12 Tf
+50 750 Td
+(Mayank Raj) Tj
+0 -15 Td
+(Jaipur, Rajasthan | +91 9693478949 | mayankithari@gmail.com | mayankraj-b6939526a | GitHub) Tj
+
+0 -30 Td
+/F1 14 Tf
+(SUMMARY) Tj
+/F1 11 Tf
+0 -18 Td
+(Junior data engineer with internship experience in data science and AI, skilled in Python, SQL and) Tj
+0 -13 Td
+(building ETL workflows. Proficient in designing and optimizing data pipelines, performing) Tj
+0 -13 Td
+(preprocessing and feature engineering, and integrating APIs and cloud tools for reliable data) Tj
+0 -13 Td
+(delivery and analytics support.) Tj
+
+0 -25 Td
+/F1 14 Tf
+(SKILLS) Tj
+/F1 11 Tf
+0 -18 Td
+(• Languages: Python, SQL, Java, HTML, CSS) Tj
+0 -13 Td
+(• AI & ML: NLP, LLM Workflows, Prompt Engineering, Scikit-learn, TensorFlow) Tj
+0 -13 Td
+(• Tools: Git, GitHub, Firebase, Android Studio, VS Code, Jupyter Notebook, OpenAI API, Groq API, Gemini API, REST APIs) Tj
+0 -13 Td
+(• Data Engineering: Data Engineering, Analytics Engineering, Relational Databases, ETL Processes, Data Pipelines) Tj
+
+0 -25 Td
+/F1 14 Tf
+(INTERNSHIP EXPERIENCE) Tj
+/F1 12 Tf
+0 -18 Td
+(Upflairs Pvt Ltd) Tj
+300 0 Td
+(Jun 2025 - Jul 2025) Tj
+-300 -13 Td
+/F1 11 Tf
+(Generative AI Intern) Tj
+0 -13 Td
+(• Worked on Generative AI, NLP, prompt engineering, and automation workflows using modern AI models) Tj
+0 -13 Td
+(• Explored AI-driven text generation systems and implemented ETL processes) Tj
+
+0 -20 Td
+/F1 12 Tf
+(Matrix Computers) Tj
+300 0 Td
+(Jul 2024 - Aug 2024) Tj
+-300 -13 Td
+/F1 11 Tf
+(Data Science with Python Intern) Tj
+0 -13 Td
+(• Built machine learning models using Python, querying relational databases) Tj
+0 -13 Td
+(• Performed data preprocessing, visualization, feature engineering, and model evaluation) Tj
+
+0 -25 Td
+/F1 14 Tf
+(PROJECTS) Tj
+/F1 12 Tf
+0 -18 Td
+(Smart Resume Analyzer & Job Recommendation System) Tj
+/F1 11 Tf
+0 -13 Td
+(• Built ETL pipelines to ingest, clean, and normalize resume data in Firebase) Tj
+0 -13 Td
+(• Tech: Python, Firebase, OpenAI API, Groq API) Tj
+
+0 -20 Td
+/F1 12 Tf
+(AI SEO Blog Automation System) Tj
+/F1 11 Tf
+0 -13 Td
+(• Orchestrated ETL workflows using n8n to automate data pipelines) Tj
+0 -13 Td
+(• Tech: Python, n8n, OpenAI API) Tj
+
+0 -20 Td
+/F1 12 Tf
+(Demand Forecasting System) Tj
+/F1 11 Tf
+0 -13 Td
+(• Developed predictive machine learning models to forecast inventory demand) Tj
+0 -13 Td
+(• Tech: Python, Pandas, NumPy, Scikit-learn) Tj
+
+0 -25 Td
+/F1 14 Tf
+(EDUCATION) Tj
+/F1 12 Tf
+0 -18 Td
+(Poornima Institute of Engineering and Technology) Tj
+300 0 Td
+(2022 - 2026) Tj
+-300 -13 Td
+/F1 11 Tf
+(B.Tech, Computer Science & Engineering) Tj
+0 -13 Td
+(GPA: 8.5/10) Tj
+
+0 -25 Td
+/F1 14 Tf
+(CERTIFICATIONS) Tj
+/F1 11 Tf
+0 -18 Td
+(• Oracle Cloud Infrastructure 2025 Certified Data Science Professional) Tj
+0 -13 Td
+(• Oracle Cloud Infrastructure 2025 Certified Generative AI Professional) Tj
+0 -13 Td
+(• BCG Data Science Job Simulation - Forage) Tj
+
+0 -25 Td
+/F1 14 Tf
+(ACHIEVEMENTS) Tj
+/F1 11 Tf
+0 -18 Td
+(• Best Non-Final Year Project Award) Tj
+0 -13 Td
+(• Published 2 Android applications on Google Play Store) Tj
+
+ET
+endstream
+endobj
+
+5 0 obj
+<< /Font << /F1 6 0 R >> >>
+endobj
+
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000214 00000 n 
+0000002764 00000 n 
+0000002831 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+2917
+%%EOF

@@ -1,0 +1,71 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 940 >>
+stream
+BT
+/F1 22 Tf
+72 730 Td
+(Mayank Raj) Tj
+/F1 12 Tf
+0 -26 Td
+(Software Developer | AI Enthusiast | Data Analyst | Android Developer) Tj
+0 -28 Td
+(Summary) Tj
+0 -18 Td
+(Product-minded developer building AI tools, dashboards, web apps, and mobile-ready experiences.) Tj
+0 -28 Td
+(Skills) Tj
+0 -18 Td
+(Python, Java, JavaScript, TypeScript, React, Next.js, Firebase, SQL, Power BI, Machine Learning,) Tj
+0 -16 Td
+(NLP, Android Development, Tailwind CSS, GitHub, APIs, Excel.) Tj
+0 -28 Td
+(Projects) Tj
+0 -18 Td
+(Smart Resume Analyzer - ATS scoring, skill extraction, and improvement suggestions.) Tj
+0 -16 Td
+(AI SEO Blog Automation - content briefs, metadata, and article workflow automation.) Tj
+0 -16 Td
+(Book Recommendation App - personalized recommendation experience.) Tj
+0 -16 Td
+(Student-Senior Social Platform - mentorship and resources community platform.) Tj
+0 -16 Td
+(AI Chatbot - portfolio assistant and FAQ automation.) Tj
+0 -16 Td
+(Analytics Dashboard - KPI tracking, insights, and reporting.) Tj
+0 -28 Td
+(Profiles) Tj
+0 -18 Td
+(GitHub: https://github.com/mayankraj) Tj
+0 -16 Td
+(LinkedIn: https://www.linkedin.com/in/mayankraj) Tj
+0 -28 Td
+(Note: Replace this starter PDF with your final resume before production launch.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001231 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1301
+%%EOF

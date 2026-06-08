@@ -35,7 +35,7 @@ import {
     X,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const roles = [
   "Software Developer",
@@ -177,30 +177,10 @@ const internships = [
   },
 ];
 
-const resumeProjects = [
-  {
-    title: "Smart Resume Analyzer & Job Recommendation System",
-    description: "Collected and validated resume data using Python with Pandas and NumPy, then applied data cleaning techniques to ensure consistent input for the recommendation model. Developed SQL queries to aggregate user interaction metrics stored in Firebase, creating insights that informed improvements to the AI-powered ATS analysis and job recommendation engine.",
-    tech: ["Python", "Firebase", "OpenAI API", "Groq API"],
-  },
-  {
-    title: "Demand Forecasting System",
-    description: "Developed predictive machine learning models to forecast inventory demand using historical sales trends and data-driven analysis techniques. Applied preprocessing, feature engineering, visualization, and model optimization to improve prediction accuracy and planning efficiency.",
-    tech: ["Python", "Pandas", "NumPy", "Scikit-learn"],
-  },
-];
-
-const advancedCertifications = [
+export const advancedCertifications = [
   "Oracle Cloud Infrastructure 2025 Certified Data Science Professional",
   "Oracle Cloud Infrastructure 2025 Certified Generative AI Professional",
   "BCG Data Science Job Simulation – Forage",
-];
-
-const certifications = [
-  "Machine Learning Foundations",
-  "Power BI Data Analytics",
-  "Java Programming",
-  "Python for Data Science",
 ];
 
 const globalCertifications = [
@@ -270,7 +250,7 @@ const globalCertifications = [
   },
 ];
 
-const awards = [
+export const awards = [
   {
     title: "Generative AI Internship & Training",
     issuer: "Upflairs Pvt. Ltd.",
@@ -297,7 +277,7 @@ const awards = [
   },
 ];
 
-const publications = [
+export const publications = [
   {
     title: "AI-Driven Smart Resume Analyzer and Job Recommendation System",
     venue: "International Journal of Research Publication and Reviews, Vol. 7, Issue 4, pp. 467-473, April 2026",
@@ -616,7 +596,7 @@ export default function PortfolioExperience() {
           <div className="hero-copy-depth">
             <motion.div style={{ y: y1 }} className="flex flex-col items-start">
               <div className="mb-8 flex flex-wrap gap-3">
-                {["Next.js 15", "React 19", "Data Science", "Open to Work"].map((chip, i) => (
+                {["Next.js 15", "React 19", "Data Science", "Open to Work"].map((chip) => (
                   <motion.span
                     className="hero-chip rounded-full border border-sky-300/20 bg-sky-900/10 px-5 py-2 text-xs font-bold tracking-wide text-sky-200 shadow-[0_0_20px_rgba(56,189,248,0.1)] backdrop-blur-md"
                     key={chip}
@@ -680,7 +660,7 @@ export default function PortfolioExperience() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.8 }}
               >
-                {stats.map(([value, label], i) => (
+                {stats.map(([value, label]) => (
                   <motion.div 
                     key={label}
                     whileHover={{ y: -5, scale: 1.05 }}
@@ -741,7 +721,7 @@ export default function PortfolioExperience() {
                   { text: "AI & GenAI", top: "20%", right: "-5%", delay: 0.2 },
                   { text: "Full Stack", bottom: "30%", left: "-15%", delay: 0.4 },
                   { text: "Android", bottom: "15%", right: "-10%", delay: 0.6 }
-                ].map((item, i) => (
+                ].map((item) => (
                   <motion.div
                     key={item.text}
                     className="absolute depth-chip rounded-full border border-white/10 bg-slate-900/60 px-5 py-2.5 backdrop-blur-xl shadow-2xl flex items-center gap-2 pointer-events-auto"

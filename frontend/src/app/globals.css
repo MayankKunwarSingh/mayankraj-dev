@@ -81,6 +81,23 @@ a {
     outline: none;
   }
 
+  .hero-3d-scene {
+    background:
+      radial-gradient(circle at 72% 42%, rgba(56, 189, 248, 0.14), transparent 28%),
+      radial-gradient(circle at 80% 58%, rgba(129, 140, 248, 0.12), transparent 34%),
+      linear-gradient(90deg, rgba(2, 4, 10, 0.7), rgba(2, 4, 10, 0.12) 54%, rgba(2, 4, 10, 0.45));
+  }
+
+  .hero-3d-scene::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(2, 4, 10, 0.88), transparent 42%),
+      radial-gradient(ellipse at center, transparent 36%, rgba(2, 4, 10, 0.74) 100%);
+  }
+
   .hero-copy-depth {
     transform-style: preserve-3d;
   }
@@ -95,35 +112,42 @@ a {
   }
 
   .hero-portrait-card {
-    transform: rotateX(8deg) rotateY(-12deg) translateZ(50px);
+    transform: rotateX(6deg) rotateY(-9deg) translateZ(38px);
     box-shadow:
       0 50px 100px -20px rgba(0, 0, 0, 0.8),
-      0 0 100px -20px rgba(56, 189, 248, 0.2);
+      0 0 90px -24px rgba(56, 189, 248, 0.24),
+      inset 0 1px 0 rgba(255, 255, 255, 0.16);
     transform-style: preserve-3d;
     transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .hero-portrait-card:hover {
-    transform: rotateX(2deg) rotateY(-5deg) translateZ(80px);
+    transform: rotateX(1.5deg) rotateY(-4deg) translateZ(58px);
   }
 
   /* Premium Depth Card - $50k feel */
   .depth-card {
     will-change: transform;
-    transform: perspective(1200px) translateZ(0);
-    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+    transform: perspective(1400px) translate3d(0, 0, 0);
+    transition:
+      transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+      border-color 0.45s ease,
+      box-shadow 0.45s ease,
+      background 0.45s ease;
+    background:
+      linear-gradient(145deg, rgba(56, 189, 248, 0.04), transparent 38%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.012) 100%);
     border: 1px solid rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(16px);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
   }
 
   .depth-card:hover {
-    transform: perspective(1200px) translateY(-10px) rotateX(4deg) rotateY(-4deg) translateZ(30px);
-    border-color: rgba(255, 255, 255, 0.15);
+    transform: perspective(1400px) translateY(-8px) rotateX(2.4deg) rotateY(-2.8deg) translateZ(18px);
+    border-color: rgba(125, 211, 252, 0.2);
     box-shadow:
       0 40px 100px -20px rgba(0, 0, 0, 0.6),
-      0 0 60px -15px rgba(56, 189, 248, 0.15),
+      0 0 54px -18px rgba(56, 189, 248, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
@@ -133,7 +157,7 @@ a {
     transform-style: preserve-3d;
   }
   .depth-card:hover .depth-card-img {
-    transform: scale(1.05) translateZ(20px);
+    transform: scale(1.04) translateZ(16px);
   }
   .depth-card-img {
     transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
@@ -143,11 +167,11 @@ a {
     box-shadow:
       0 20px 50px rgba(0, 0, 0, 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transform: translateZ(60px);
+    transform: translateZ(42px);
     transition: all 0.4s ease;
   }
   .depth-chip:hover {
-    transform: translateZ(80px) translateY(-5px);
+    transform: translateZ(56px) translateY(-4px);
     border-color: rgba(56, 189, 248, 0.4);
     box-shadow: 0 0 30px rgba(56, 189, 248, 0.2), inset 0 1px 0 rgba(255,255,255,0.2);
   }
@@ -292,8 +316,26 @@ a {
   }
 
   @media (max-width: 767px) {
+    .hero-3d-scene {
+      opacity: 0.58;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(56, 189, 248, 0.14), transparent 34%),
+        linear-gradient(180deg, rgba(2, 4, 10, 0.16), rgba(2, 4, 10, 0.88));
+    }
+
+    .hero-3d-scene::after {
+      background:
+        linear-gradient(180deg, rgba(2, 4, 10, 0.68), rgba(2, 4, 10, 0.2) 45%, rgba(2, 4, 10, 0.88)),
+        radial-gradient(ellipse at center, transparent 30%, rgba(2, 4, 10, 0.82) 100%);
+    }
+
     .hero-portrait-card {
       transform: rotateX(2deg) rotateY(-4deg) translateZ(20px);
+    }
+
+    .depth-card,
+    .depth-card:hover {
+      transform: translateY(-4px);
     }
 
     .hero-copy-depth > * {

@@ -1,63 +1,141 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { 
-  Environment, 
-  Float, 
+import {
+  Float,
   Stars, 
   MeshTransmissionMaterial,
   ContactShadows,
-  Lightformer
 } from "@react-three/drei";
 import { EffectComposer, Bloom, DepthOfField, Noise, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 
-// Premium Glass/Crystal Object
-function PremiumTorus() {
+const themeColors = {
+  background: "#02040a",
+  cyan: "#38bdf8",
+  indigo: "#818cf8",
+  violet: "#c084fc",
+  emerald: "#34d399",
+  white: "#f8fafc",
+};
+
+function createSeededRandom(seed = 42) {
+  let value = seed;
+  return () => {
+    value = (value * 1664525 + 1013904223) % 4294967296;
+    return value / 4294967296;
+  };
+}
+
+function PremiumCore() {
   const meshRef = useRef<THREE.Mesh>(null);
+  const innerRef = useRef<THREE.Mesh>(null);
   
   useFrame((state) => {
+    const t = state.clock.getElapsedTime();
     if (meshRef.current) {
-      const t = state.clock.getElapsedTime();
-      meshRef.current.rotation.x = Math.cos(t / 4) / 2;
-      meshRef.current.rotation.y = Math.sin(t / 4) / 2;
-      meshRef.current.rotation.z = t / 5;
-      meshRef.current.position.y = Math.sin(t / 2) * 0.5;
+      meshRef.current.rotation.x = Math.cos(t / 4) * 0.28;
+      meshRef.current.rotation.y = Math.sin(t / 5) * 0.42 + t * 0.08;
+      meshRef.current.rotation.z = t * 0.12;
+      meshRef.current.position.y = Math.sin(t / 2) * 0.25;
+    }
+    if (innerRef.current) {
+      innerRef.current.rotation.y = -t * 0.22;
+      innerRef.current.scale.setScalar(0.78 + Math.sin(t * 2) * 0.035);
     }
   });
 
   return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-      <mesh ref={meshRef} scale={1.8}>
-        {/* Complex geometry for better light refraction */}
+    <Float speed={1.5} rotationIntensity={0.24} floatIntensity={0.45}>
+      <mesh ref={meshRef} scale={1.55}>
         <torusKnotGeometry args={[1, 0.3, 256, 32]} />
         <MeshTransmissionMaterial 
           backside
-          backsideThickness={5}
-          thickness={2}
-          roughness={0}
+          backsideThickness={3}
+          thickness={1.35}
+          roughness={0.08}
           transmission={1}
-          ior={1.5}
-          chromaticAberration={0.15}
-          anisotropy={0.3}
-          color="#ffffff"
-          attenuationColor="#38bdf8"
-          attenuationDistance={1}
+          ior={1.42}
+          chromaticAberration={0.06}
+          anisotropy={0.18}
+          color={themeColors.white}
+          attenuationColor={themeColors.cyan}
+          attenuationDistance={1.25}
         />
       </mesh>
       
-      {/* Inner glowing core */}
-      <mesh scale={0.6}>
-        <icosahedronGeometry args={[1, 1]} />
-        <meshBasicMaterial color="#ffffff" />
-        <pointLight intensity={2} color="#38bdf8" distance={5} />
+      <mesh ref={innerRef} scale={0.72}>
+        <icosahedronGeometry args={[1, 2]} />
+        <meshBasicMaterial color={themeColors.cyan} transparent opacity={0.34} />
+        <pointLight intensity={2.2} color={themeColors.cyan} distance={6} />
       </mesh>
     </Float>
   );
 }
 
-// Cinematic Ambient Particles
+function OrbitRings() {
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (!groupRef.current) return;
+    const t = state.clock.getElapsedTime();
+    groupRef.current.rotation.x = -0.35 + Math.sin(t * 0.2) * 0.04;
+    groupRef.current.rotation.y = t * 0.08;
+    groupRef.current.rotation.z = Math.sin(t * 0.18) * 0.08;
+  });
+
+  return (
+    <group ref={groupRef}>
+      {[2.8, 3.45, 4.15].map((radius, index) => (
+        <mesh
+          key={radius}
+          rotation={[
+            Math.PI / 2 + index * 0.28,
+            index % 2 ? 0.32 : -0.18,
+            index * 0.5,
+          ]}
+        >
+          <torusGeometry args={[radius, 0.008, 12, 180]} />
+          <meshBasicMaterial
+            color={[themeColors.cyan, themeColors.indigo, themeColors.violet][index]}
+            transparent
+            opacity={0.36 - index * 0.06}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function DataPanels() {
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (!groupRef.current) return;
+    const t = state.clock.getElapsedTime();
+    groupRef.current.children.forEach((child, index) => {
+      child.position.y += Math.sin(t * 0.8 + index) * 0.0008;
+      child.rotation.y = Math.sin(t * 0.3 + index) * 0.12;
+    });
+  });
+
+  return (
+    <group ref={groupRef}>
+      {[
+        [-3.1, 1.35, -1.2, themeColors.cyan],
+        [3.4, -1.1, -0.4, themeColors.indigo],
+        [2.6, 1.85, -2.4, themeColors.emerald],
+      ].map(([x, y, z, color], index) => (
+        <mesh key={`${x}-${y}`} position={[x as number, y as number, z as number]} rotation={[0.18, index ? -0.35 : 0.4, 0]}>
+          <boxGeometry args={[1.2, 0.58, 0.03]} />
+          <meshBasicMaterial color={color as string} transparent opacity={0.16} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 function CinematicParticles({ count = 150 }) {
   const mesh = useRef<THREE.InstancedMesh>(null);
   const { viewport } = useThree();
@@ -65,17 +143,17 @@ function CinematicParticles({ count = 150 }) {
   const dummy = useMemo(() => new THREE.Object3D(), []);
   
   const particles = useMemo(() => {
+    const random = createSeededRandom(124);
     const temp = [];
     for (let i = 0; i < count; i++) {
-      const t = Math.random() * 100;
-      const factor = 10 + Math.random() * 50;
-      const speed = 0.005 + Math.random() / 500;
-      const xFactor = -20 + Math.random() * 40;
-      const yFactor = -20 + Math.random() * 40;
-      const zFactor = -20 + Math.random() * 40;
-      // Assign random color to each particle (white, light blue, purple)
-      const colors = ['#ffffff', '#38bdf8', '#c084fc'];
-      const color = colors[Math.floor(Math.random() * colors.length)];
+      const t = random() * 100;
+      const factor = 8 + random() * 36;
+      const speed = 0.0025 + random() / 700;
+      const xFactor = -18 + random() * 36;
+      const yFactor = -14 + random() * 28;
+      const zFactor = -18 + random() * 36;
+      const colors = [themeColors.white, themeColors.cyan, themeColors.indigo, themeColors.violet];
+      const color = colors[Math.floor(random() * colors.length)];
       temp.push({ t, factor, speed, xFactor, yFactor, zFactor, mx: 0, my: 0, color });
     }
     return temp;
@@ -93,7 +171,8 @@ function CinematicParticles({ count = 150 }) {
 
   useFrame((state) => {
     particles.forEach((particle, i) => {
-      let { t, factor, speed, xFactor, yFactor, zFactor } = particle;
+      let { t } = particle;
+      const { factor, speed, xFactor, yFactor, zFactor } = particle;
       
       t = particle.t += speed;
       const a = Math.cos(t) + Math.sin(t * 1) / 10;
@@ -129,8 +208,9 @@ function CinematicParticles({ count = 150 }) {
       <meshStandardMaterial 
         vertexColors 
         transparent 
-        opacity={0.8}
-        emissiveIntensity={2}
+        opacity={0.72}
+        emissive={themeColors.cyan}
+        emissiveIntensity={0.45}
         roughness={0.2}
       />
     </instancedMesh>
@@ -141,60 +221,96 @@ function CinematicParticles({ count = 150 }) {
 function LightingSetup() {
   const { pointer } = useThree();
   const mouseLight = useRef<THREE.PointLight>(null);
+  const target = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(() => {
     if (mouseLight.current) {
-      // Lerp mouse light for smoothness
-      mouseLight.current.position.lerp(
-        new THREE.Vector3(pointer.x * 10, pointer.y * 10, 5),
-        0.1
-      );
+      target.set(pointer.x * 8, pointer.y * 7, 5);
+      mouseLight.current.position.lerp(target, 0.08);
     }
   });
 
   return (
     <>
-      <ambientLight intensity={0.2} />
-      <directionalLight position={[10, 20, 10]} intensity={1.5} color="#ffffff" />
-      <pointLight ref={mouseLight} intensity={3} color="#38bdf8" distance={15} />
-      <spotLight position={[-10, -10, -10]} intensity={2} color="#c084fc" />
-      
-      {/* Lightformers for realistic glass reflections */}
-      <Environment preset="city" resolution={256}>
-        <Lightformer form="rect" intensity={2} position={[10, 5, 5]} scale={[10, 20, 1]} target={[0, 0, 0]} />
-        <Lightformer form="circle" intensity={1.5} position={[-10, 10, -5]} scale={[5, 5, 1]} target={[0, 0, 0]} />
-      </Environment>
+      <ambientLight intensity={0.28} />
+      <directionalLight position={[10, 20, 10]} intensity={1.35} color={themeColors.white} />
+      <pointLight ref={mouseLight} intensity={2.5} color={themeColors.cyan} distance={15} />
+      <spotLight position={[-8, -6, -8]} intensity={1.7} color={themeColors.violet} />
+      <rectAreaLight
+        position={[7, 4, 5]}
+        rotation={[0, -0.7, 0]}
+        intensity={3}
+        width={8}
+        height={5}
+        color={themeColors.cyan}
+      />
+      <rectAreaLight
+        position={[-6, 6, -4]}
+        rotation={[0.4, 0.8, 0]}
+        intensity={2}
+        width={5}
+        height={5}
+        color={themeColors.violet}
+      />
     </>
+  );
+}
+
+function HeroRig() {
+  const groupRef = useRef<THREE.Group>(null);
+  const { pointer, viewport } = useThree();
+
+  useFrame((state) => {
+    if (!groupRef.current) return;
+    const t = state.clock.getElapsedTime();
+    const desktopOffset = viewport.width > 9 ? 2.4 : 0;
+
+    groupRef.current.position.x += (desktopOffset + pointer.x * 0.24 - groupRef.current.position.x) * 0.035;
+    groupRef.current.position.y += (pointer.y * 0.18 - groupRef.current.position.y) * 0.035;
+    groupRef.current.rotation.y += (pointer.x * 0.12 - groupRef.current.rotation.y) * 0.035;
+    groupRef.current.rotation.x += (pointer.y * -0.08 - groupRef.current.rotation.x) * 0.035;
+    groupRef.current.position.z = Math.sin(t * 0.28) * 0.18;
+  });
+
+  return (
+    <group ref={groupRef}>
+      <OrbitRings />
+      <PremiumCore />
+      <DataPanels />
+    </group>
   );
 }
 
 export function Hero3DScene() {
   return (
-    <div className="absolute inset-0 z-0 pointer-events-none mix-blend-screen opacity-90" aria-hidden="true">
-      <Canvas camera={{ position: [0, 0, 10], fov: 35 }} dpr={[1, 2]}>
-        <color attach="background" args={["#02040a"]} />
+    <div className="hero-3d-scene absolute inset-0 z-0 pointer-events-none opacity-95" aria-hidden="true">
+      <Canvas
+        camera={{ position: [0, 0, 10], fov: 36 }}
+        dpr={[1, 1.75]}
+        gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+      >
+        <color attach="background" args={[themeColors.background]} />
         <LightingSetup />
         
-        <PremiumTorus />
+        <HeroRig />
         
-        <CinematicParticles count={250} />
+        <CinematicParticles count={180} />
         
-        {/* Parallax Stars */}
-        <Stars radius={50} depth={50} count={5000} factor={3} saturation={1} fade speed={1.5} />
+        <Stars radius={45} depth={36} count={2400} factor={2.6} saturation={0.6} fade speed={0.6} />
         
         <ContactShadows 
           position={[0, -3, 0]} 
-          opacity={0.4} 
-          scale={20} 
+          opacity={0.28} 
+          scale={16} 
           blur={2.5} 
           far={4} 
         />
         
-        <EffectComposer multisampling={4}>
-          <Bloom luminanceThreshold={0.5} mipmapBlur luminanceSmoothing={0.3} intensity={1.2} />
-          <DepthOfField focusDistance={0.02} focalLength={0.05} bokehScale={3} height={480} />
-          <Noise opacity={0.03} />
-          <Vignette eskil={false} offset={0.1} darkness={1.1} />
+        <EffectComposer multisampling={2}>
+          <Bloom luminanceThreshold={0.36} mipmapBlur luminanceSmoothing={0.28} intensity={0.85} />
+          <DepthOfField focusDistance={0.028} focalLength={0.042} bokehScale={2.2} height={480} />
+          <Noise opacity={0.025} />
+          <Vignette eskil={false} offset={0.18} darkness={0.95} />
         </EffectComposer>
       </Canvas>
     </div>

@@ -328,10 +328,17 @@ export function Hero3DScene() {
         )}
         
         <EffectComposer multisampling={reduceQuality ? 0 : 2}>
-          <Bloom luminanceThreshold={0.4} mipmapBlur luminanceSmoothing={0.3} intensity={0.7} />
-          {!reduceQuality && (
-            <Vignette eskil={false} offset={0.18} darkness={0.95} />
-          )}
+          <Bloom
+            luminanceThreshold={0.4}
+            mipmapBlur
+            luminanceSmoothing={0.3}
+            intensity={0.7}
+          />
+          <Vignette
+            eskil={false}
+            offset={0.18}
+            darkness={reduceQuality ? 0 : 0.95}
+          />
         </EffectComposer>
       </Canvas>
     </div>

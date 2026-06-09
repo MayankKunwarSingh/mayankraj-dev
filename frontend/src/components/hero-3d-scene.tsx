@@ -1,13 +1,11 @@
 "use client";
 
 import {
-  ContactShadows,
   Float,
-  MeshTransmissionMaterial,
   Stars,
 } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
@@ -47,29 +45,27 @@ function PremiumCore({ reduceQuality }: { reduceQuality: boolean }) {
   });
 
   return (
-    <Float speed={1.5} rotationIntensity={0.24} floatIntensity={0.45}>
-      <mesh ref={meshRef} scale={1.55}>
-        <torusKnotGeometry args={[1, 0.3, reduceQuality ? 100 : 200, reduceQuality ? 16 : 32]} />
-        <MeshTransmissionMaterial 
-          backside={!reduceQuality}
-          backsideThickness={1.5}
-          thickness={1.35}
-          roughness={0.15}
-          transmission={1}
-          ior={1.42}
-          chromaticAberration={0.06}
-          anisotropy={0.18}
+    <Float speed={reduceQuality ? 0.8 : 1.05} rotationIntensity={0.12} floatIntensity={0.22}>
+      <mesh ref={meshRef} scale={1.32}>
+        <torusKnotGeometry args={[1, 0.28, reduceQuality ? 48 : 72, reduceQuality ? 8 : 12]} />
+        <meshPhysicalMaterial
           color={themeColors.white}
-          attenuationColor={themeColors.cyan}
-          attenuationDistance={1.25}
-          resolution={reduceQuality ? 256 : 512}
+          roughness={0.18}
+          metalness={0.08}
+          clearcoat={0.85}
+          clearcoatRoughness={0.22}
+          transmission={reduceQuality ? 0.18 : 0.34}
+          thickness={0.45}
+          ior={1.35}
+          emissive={themeColors.cyan}
+          emissiveIntensity={0.08}
         />
       </mesh>
       
       <mesh ref={innerRef} scale={0.72}>
         <icosahedronGeometry args={[1, reduceQuality ? 1 : 2]} />
         <meshBasicMaterial color={themeColors.cyan} transparent opacity={0.34} />
-        <pointLight intensity={2.2} color={themeColors.cyan} distance={6} />
+        {!reduceQuality && <pointLight intensity={0.75} color={themeColors.cyan} distance={4.5} />}
       </mesh>
     </Float>
   );
@@ -97,7 +93,7 @@ function OrbitRings({ reduceQuality }: { reduceQuality: boolean }) {
             index * 0.5,
           ]}
         >
-          <torusGeometry args={[radius, 0.008, reduceQuality ? 8 : 12, reduceQuality ? 64 : 128]} />
+          <torusGeometry args={[radius, 0.008, 8, reduceQuality ? 40 : 56]} />
           <meshBasicMaterial
             color={[themeColors.cyan, themeColors.indigo, themeColors.violet][index]}
             transparent
@@ -109,12 +105,13 @@ function OrbitRings({ reduceQuality }: { reduceQuality: boolean }) {
   );
 }
 
-function DataPanels() {
+function DataPanels({ reduceQuality }: { reduceQuality: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     if (!groupRef.current) return;
     const t = state.clock.getElapsedTime();
+    if (reduceQuality) return;
     groupRef.current.children.forEach((child, index) => {
       child.position.y += Math.sin(t * 0.8 + index) * 0.0008;
       child.rotation.y = Math.sin(t * 0.3 + index) * 0.12;
@@ -137,26 +134,26 @@ function DataPanels() {
   );
 }
 
-function CinematicParticles({ count = 150, reduceQuality = false }: { count?: number, reduceQuality?: boolean }) {
+function CinematicParticles({ reduceQuality = false }: { reduceQuality?: boolean }) {
   const mesh = useRef<THREE.InstancedMesh>(null);
   const { viewport } = useThree();
 
   const dummy = useMemo(() => new THREE.Object3D(), []);
-  const actualCount = reduceQuality ? Math.floor(count / 2.5) : count;
+  const actualCount = reduceQuality ? 20 : 54;
   
   const particles = useMemo(() => {
     const random = createSeededRandom(124);
     const temp = [];
     for (let i = 0; i < actualCount; i++) {
       const t = random() * 100;
-      const factor = 8 + random() * 36;
-      const speed = 0.0025 + random() / 700;
+      const factor = 6 + random() * 20;
+      const speed = 0.0018 + random() / 900;
       const xFactor = -18 + random() * 36;
       const yFactor = -14 + random() * 28;
       const zFactor = -18 + random() * 36;
       const colors = [themeColors.white, themeColors.cyan, themeColors.indigo, themeColors.violet];
       const color = colors[Math.floor(random() * colors.length)];
-      temp.push({ t, factor, speed, xFactor, yFactor, zFactor, mx: 0, my: 0, color });
+      temp.push({ t, factor, speed, xFactor, yFactor, zFactor, color });
     }
     return temp;
   }, [actualCount]);
@@ -181,14 +178,13 @@ function CinematicParticles({ count = 150, reduceQuality = false }: { count?: nu
       const b = Math.sin(t) + Math.cos(t * 2) / 10;
       const s = Math.cos(t) * 0.5 + 0.5;
 
-      // Smooth mouse follow
-      particle.mx += (state.pointer.x * viewport.width * 0.5 - particle.mx) * 0.05;
-      particle.my += (state.pointer.y * viewport.height * 0.5 - particle.my) * 0.05;
+      const pointerX = reduceQuality ? 0 : state.pointer.x * viewport.width * 0.08;
+      const pointerY = reduceQuality ? 0 : state.pointer.y * viewport.height * 0.08;
 
       dummy.position.set(
-        (particle.mx / 5) + a + xFactor + Math.cos((t / 10) * factor) + (Math.sin(t * 1) * factor) / 10,
-        (particle.my / 5) + b + yFactor + Math.sin((t / 10) * factor) + (Math.cos(t * 2) * factor) / 10,
-        (particle.my / 5) + b + zFactor + Math.cos((t / 10) * factor) + (Math.sin(t * 3) * factor) / 10
+        pointerX + a + xFactor + Math.cos((t / 10) * factor) + (Math.sin(t) * factor) / 14,
+        pointerY + b + yFactor + Math.sin((t / 10) * factor) + (Math.cos(t * 2) * factor) / 14,
+        b + zFactor + Math.cos((t / 10) * factor) + (Math.sin(t * 3) * factor) / 14
       );
       dummy.scale.set(s, s, s);
       dummy.updateMatrix();
@@ -204,7 +200,7 @@ function CinematicParticles({ count = 150, reduceQuality = false }: { count?: nu
 
   return (
     <instancedMesh ref={mesh} args={[undefined, undefined, actualCount]}>
-      <sphereGeometry args={[0.04, reduceQuality ? 8 : 16, reduceQuality ? 8 : 16]}>
+      <sphereGeometry args={[0.035, 8, 8]}>
         <instancedBufferAttribute attach="attributes-color" args={[colorArray, 3]} />
       </sphereGeometry>
       <meshStandardMaterial 
@@ -219,43 +215,13 @@ function CinematicParticles({ count = 150, reduceQuality = false }: { count?: nu
   );
 }
 
-// Lighting Setup for Premium Reflections
 function LightingSetup({ reduceQuality }: { reduceQuality: boolean }) {
-  const { pointer } = useThree();
-  const mouseLight = useRef<THREE.PointLight>(null);
-  const target = useMemo(() => new THREE.Vector3(), []);
-
-  useFrame(() => {
-    if (mouseLight.current && !reduceQuality) {
-      target.set(pointer.x * 8, pointer.y * 7, 5);
-      mouseLight.current.position.lerp(target, 0.08);
-    }
-  });
-
   return (
     <>
-      <ambientLight intensity={0.28} />
-      <directionalLight position={[10, 20, 10]} intensity={1.35} color={themeColors.white} />
-      {!reduceQuality && (
-        <pointLight ref={mouseLight} intensity={2.5} color={themeColors.cyan} distance={15} />
-      )}
-      <spotLight position={[-8, -6, -8]} intensity={1.7} color={themeColors.violet} />
-      <rectAreaLight
-        position={[7, 4, 5]}
-        rotation={[0, -0.7, 0]}
-        intensity={3}
-        width={8}
-        height={5}
-        color={themeColors.cyan}
-      />
-      <rectAreaLight
-        position={[-6, 6, -4]}
-        rotation={[0.4, 0.8, 0]}
-        intensity={2}
-        width={5}
-        height={5}
-        color={themeColors.violet}
-      />
+      <ambientLight intensity={reduceQuality ? 0.58 : 0.42} />
+      <directionalLight position={[8, 12, 8]} intensity={reduceQuality ? 1.15 : 1.45} color={themeColors.white} />
+      <directionalLight position={[-7, -4, 6]} intensity={0.55} color={themeColors.violet} />
+      {!reduceQuality && <pointLight position={[4.5, 2.5, 5]} intensity={0.8} color={themeColors.cyan} distance={10} />}
     </>
   );
 }
@@ -267,12 +233,13 @@ function HeroRig({ reduceQuality }: { reduceQuality: boolean }) {
   useFrame((state) => {
     if (!groupRef.current) return;
     const t = state.clock.getElapsedTime();
-    const desktopOffset = viewport.width > 9 ? 2.4 : 0;
+    const desktopOffset = viewport.width > 9 ? 3.25 : 0.7;
 
-    groupRef.current.position.x += (desktopOffset + pointer.x * 0.24 - groupRef.current.position.x) * 0.05;
-    groupRef.current.position.y += (pointer.y * 0.18 - groupRef.current.position.y) * 0.05;
-    groupRef.current.rotation.y += (pointer.x * 0.12 - groupRef.current.rotation.y) * 0.05;
-    groupRef.current.rotation.x += (pointer.y * -0.08 - groupRef.current.rotation.x) * 0.05;
+    const pointerScale = reduceQuality ? 0 : 1;
+    groupRef.current.position.x += (desktopOffset + pointer.x * 0.1 * pointerScale - groupRef.current.position.x) * 0.035;
+    groupRef.current.position.y += (pointer.y * 0.08 * pointerScale - groupRef.current.position.y) * 0.035;
+    groupRef.current.rotation.y += (pointer.x * 0.045 * pointerScale - groupRef.current.rotation.y) * 0.035;
+    groupRef.current.rotation.x += (pointer.y * -0.035 * pointerScale - groupRef.current.rotation.x) * 0.035;
     groupRef.current.position.z = Math.sin(t * 0.28) * 0.18;
   });
 
@@ -280,7 +247,7 @@ function HeroRig({ reduceQuality }: { reduceQuality: boolean }) {
     <group ref={groupRef}>
       <OrbitRings reduceQuality={reduceQuality} />
       <PremiumCore reduceQuality={reduceQuality} />
-      <DataPanels />
+      <DataPanels reduceQuality={reduceQuality} />
     </group>
   );
 }
@@ -300,10 +267,12 @@ export function Hero3DScene() {
   }, []);
 
   return (
-    <div className="hero-3d-scene absolute inset-0 z-0 pointer-events-none opacity-95" aria-hidden="true">
+    <div className="hero-3d-scene absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
       <Canvas
         camera={{ position: [0, 0, 10], fov: 36 }}
-        dpr={[1, reduceQuality ? 1.2 : 1.75]}
+        frameloop="always"
+        performance={{ min: 0.35 }}
+        dpr={reduceQuality ? [0.8, 1] : [1, 1.35]}
         gl={{ alpha: true, antialias: !reduceQuality, powerPreference: "high-performance" }}
       >
         <color attach="background" args={[themeColors.background]} />
@@ -311,35 +280,20 @@ export function Hero3DScene() {
         
         <HeroRig reduceQuality={reduceQuality} />
         
-        <CinematicParticles count={180} reduceQuality={reduceQuality} />
+        <CinematicParticles reduceQuality={reduceQuality} />
         
-        <Stars radius={45} depth={36} count={reduceQuality ? 800 : 2000} factor={reduceQuality ? 3 : 2.6} saturation={0.6} fade speed={reduceQuality ? 0.2 : 0.6} />
+        <Stars radius={42} depth={30} count={reduceQuality ? 200 : 500} factor={reduceQuality ? 2.4 : 2.2} saturation={0.45} fade speed={reduceQuality ? 0.08 : 0.18} />
         
         {!reduceQuality && (
-          <ContactShadows 
-            position={[0, -3, 0]} 
-            opacity={0.28} 
-            scale={16} 
-            blur={2.5} 
-            far={4} 
-            resolution={256}
-            frames={1}
-          />
+          <EffectComposer multisampling={0}>
+            <Bloom
+              luminanceThreshold={0.55}
+              mipmapBlur
+              luminanceSmoothing={0.28}
+              intensity={0.32}
+            />
+          </EffectComposer>
         )}
-        
-        <EffectComposer multisampling={reduceQuality ? 0 : 2}>
-          <Bloom
-            luminanceThreshold={0.4}
-            mipmapBlur
-            luminanceSmoothing={0.3}
-            intensity={0.7}
-          />
-          <Vignette
-            eskil={false}
-            offset={0.18}
-            darkness={reduceQuality ? 0 : 0.95}
-          />
-        </EffectComposer>
       </Canvas>
     </div>
   );

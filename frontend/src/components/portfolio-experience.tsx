@@ -5,13 +5,9 @@ import { Card } from "@/components/ui/card";
 import {
   AnimatePresence,
   motion,
-  useMotionValue,
   useScroll,
-  useSpring,
   useTransform,
 } from "framer-motion";
-import gsap from "gsap";
-import Lenis from "lenis";
 import {
   ArrowDown,
   Bot,
@@ -34,10 +30,24 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
+import type { IconType } from "react-icons";
+import { FaChartBar, FaFileExcel, FaJava } from "react-icons/fa";
+import {
+  SiAndroid,
+  SiFirebase,
+  SiGithub,
+  SiGooglegemini,
+  SiMysql,
+  SiOpenai,
+  SiOpenapiinitiative,
+  SiPandas,
+  SiPython,
+  SiScikitlearn,
+  SiSpacy,
+} from "react-icons/si";
 
 const Hero3DScene = dynamic(() => import("@/components/hero-3d-scene").then(mod => mod.Hero3DScene), { ssr: false });
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const roles = [
   "Software Developer",
@@ -57,20 +67,29 @@ const navItems = [
   ["Contact", "#contact"],
 ] as const;
 
-const skills = [
-  ["Python", "Data analysis, automation scripts, and ML practice", "AI"],
-  ["Java", "OOP, DSA practice, and Android basics", "Core"],
-  ["Firebase", "Auth, Firestore, and simple realtime features", "Cloud"],
-  ["SQL", "Queries, joins, reports, and data cleanup", "Data"],
-  ["Power BI", "Dashboards, charts, and business reports", "Data"],
-  ["Machine Learning", "Classification, prediction, and model experiments", "AI"],
-  ["NLP", "Text analysis, resume parsing, and matching logic", "AI"],
-  ["LLM Workflows", "LLM Workflows and Prompt Engineering with APIs", "AI"],
-  ["Android Development", "Mobile app screens and Firebase-connected flows", "Mobile"],
-  ["GitHub", "Version control, project history, and collaboration", "DevOps"],
-  ["APIs", "Connecting forms, data, and third-party services", "Backend"],
-  ["Excel", "Cleaning data, formulas, and quick analysis", "Data"],
-  ["Pandas & NumPy", "Data manipulation, transformation, and analysis", "Data"],
+type Skill = {
+  name: string;
+  copy: string;
+  group: string;
+  Icon: IconType;
+  color: string;
+};
+
+const skills: Skill[] = [
+  { name: "Python", copy: "Data analysis, automation scripts, and ML practice", group: "AI", Icon: SiPython, color: "#facc15" },
+  { name: "Java", copy: "OOP, DSA practice, and Android fundamentals", group: "Core", Icon: FaJava, color: "#f97316" },
+  { name: "Firebase", copy: "Auth, Firestore, and realtime product features", group: "Cloud", Icon: SiFirebase, color: "#ffca28" },
+  { name: "SQL", copy: "Queries, joins, reports, and data cleanup", group: "Data", Icon: SiMysql, color: "#38bdf8" },
+  { name: "Power BI", copy: "Dashboards, charts, and business reporting", group: "Data", Icon: FaChartBar, color: "#f2c811" },
+  { name: "Machine Learning", copy: "Classification, prediction, and model experiments", group: "AI", Icon: SiScikitlearn, color: "#f59e0b" },
+  { name: "NLP", copy: "Text analysis, resume parsing, and matching logic", group: "AI", Icon: SiSpacy, color: "#10b981" },
+  { name: "LLM Workflows", copy: "Prompt engineering and applied AI API flows", group: "AI", Icon: SiOpenai, color: "#f8fafc" },
+  { name: "Android Development", copy: "Mobile app screens and Firebase-connected flows", group: "Mobile", Icon: SiAndroid, color: "#3ddc84" },
+  { name: "GitHub", copy: "Version control, project history, and collaboration", group: "DevOps", Icon: SiGithub, color: "#f8fafc" },
+  { name: "APIs", copy: "Connecting forms, data, and third-party services", group: "Backend", Icon: SiOpenapiinitiative, color: "#6ba539" },
+  { name: "Excel", copy: "Cleaning data, formulas, and quick analysis", group: "Data", Icon: FaFileExcel, color: "#22c55e" },
+  { name: "Pandas & NumPy", copy: "Data manipulation, transformation, and analysis", group: "Data", Icon: SiPandas, color: "#a78bfa" },
+  { name: "Gemini", copy: "LLM-assisted research and workflow exploration", group: "AI", Icon: SiGooglegemini, color: "#8ab4f8" },
 ];
 
 const projects = [
@@ -297,50 +316,6 @@ const socials = [
   ["Kaggle", "https://www.kaggle.com/mayankraj55", Globe2],
 ] as const;
 
-const orbitAnimation = {
-  v: "5.7.4",
-  fr: 30,
-  ip: 0,
-  op: 90,
-  w: 220,
-  h: 220,
-  nm: "ai-orbit",
-  ddd: 0,
-  assets: [],
-  layers: [
-    {
-      ddd: 0,
-      ind: 1,
-      ty: 4,
-      nm: "pulse",
-      sr: 1,
-      ks: {
-        o: { a: 0, k: 85 },
-        r: { a: 1, k: [{ t: 0, s: [0] }, { t: 90, s: [360] }] },
-        p: { a: 0, k: [110, 110, 0] },
-        a: { a: 0, k: [0, 0, 0] },
-        s: { a: 0, k: [100, 100, 100] },
-      },
-      shapes: [
-        {
-          ty: "el",
-          p: { a: 0, k: [0, 0] },
-          s: { a: 0, k: [150, 150] },
-        },
-        {
-          ty: "st",
-          c: { a: 0, k: [0.22, 0.74, 0.98, 1] },
-          o: { a: 0, k: 100 },
-          w: { a: 0, k: 3 },
-        },
-      ],
-      ip: 0,
-      op: 90,
-      st: 0,
-    },
-  ],
-};
-
 function SectionTitle({
   eyebrow,
   title,
@@ -372,6 +347,81 @@ function SectionTitle({
   );
 }
 
+const SkillCard = memo(function SkillCard({ skill }: { skill: Skill }) {
+  const { Icon } = skill;
+
+  return (
+    <Card className="skill-card h-full p-6">
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <span className="skill-logo grid size-12 place-items-center rounded-lg border border-white/10 bg-white/[0.045]">
+          <Icon size={26} style={{ color: skill.color }} aria-hidden="true" />
+        </span>
+        <span className="rounded-full border border-sky-400/15 bg-sky-400/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sky-300">
+          {skill.group}
+        </span>
+      </div>
+      <h3 className="text-xl font-bold text-white">{skill.name}</h3>
+      <p className="mt-3 text-sm leading-relaxed text-slate-400">{skill.copy}</p>
+    </Card>
+  );
+});
+
+type Project = (typeof projects)[number];
+
+const ProjectCard = memo(function ProjectCard({
+  project,
+  index,
+}: {
+  project: Project;
+  index: number;
+}) {
+  return (
+    <Card className="project-card group h-full overflow-hidden p-0">
+      <div className="project-preview relative h-52 overflow-hidden border-b border-white/10 bg-slate-950">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_18%,rgba(56,189,248,0.22),transparent_34%),radial-gradient(circle_at_78%_72%,rgba(52,211,153,0.16),transparent_32%)]" />
+        <div className="relative flex h-full flex-col justify-between p-5">
+          <div className="flex items-center justify-between">
+            <span className="font-mono text-xs font-bold text-sky-300">{project.type}</span>
+            <span className="text-xs font-bold text-slate-500">0{index + 1}</span>
+          </div>
+          <div className="grid gap-3">
+            <div className="h-2 w-3/4 rounded-full bg-gradient-to-r from-sky-400 to-emerald-400" />
+            <div className="grid grid-cols-[1fr_1.6fr] gap-3">
+              <div className="h-12 rounded-md bg-white/[0.06]" />
+              <div className="h-12 rounded-md bg-white/[0.1]" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-grow flex-col p-7">
+        <h3 className="text-2xl font-bold text-white transition-colors group-hover:text-sky-300">{project.title}</h3>
+        <p className="mt-4 flex-grow text-sm leading-relaxed text-slate-400">
+          {project.description}
+        </p>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {project.stack.map((tech) => (
+            <span className="rounded-md border border-white/5 bg-white/[0.055] px-2.5 py-1 text-xs font-medium text-slate-300" key={tech}>
+              {tech}
+            </span>
+          ))}
+        </div>
+        <div className="mt-8 flex gap-3">
+          <a href={project.demo} className="flex-1">
+            <Button className="w-full button-primary rounded-xl" size="sm">
+              View Project <ExternalLink size={16} />
+            </Button>
+          </a>
+          <a href={project.github} target="_blank" rel="noreferrer">
+            <Button size="icon" variant="secondary" className="rounded-xl border border-white/10" aria-label={`${project.title} GitHub`}>
+              <Code2 size={18} />
+            </Button>
+          </a>
+        </div>
+      </div>
+    </Card>
+  );
+});
+
 export default function PortfolioExperience() {
   const [theme, setTheme] = useState("dark");
   const [roleIndex, setRoleIndex] = useState(0);
@@ -385,15 +435,6 @@ export default function PortfolioExperience() {
   const y1 = useTransform(scrollYProgress, [0, 1], [0, 200]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const opacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
-
-  // Mouse Tracking
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const cursorX = useSpring(mouseX, { stiffness: 150, damping: 20 });
-  const cursorY = useSpring(mouseY, { stiffness: 150, damping: 20 });
-  
-  const glowX = useTransform(cursorX, (value) => `${value - 300}px`);
-  const glowY = useTransform(cursorY, (value) => `${value - 300}px`);
 
   const stats = useMemo(
     () => [
@@ -414,37 +455,17 @@ export default function PortfolioExperience() {
     const storedTheme = localStorage.getItem("mayank-theme");
     if (storedTheme) setTheme(storedTheme);
 
-    const lenis = new Lenis({ lerp: 0.05, smoothWheel: true, wheelMultiplier: 1.2 });
-    let frame = 0;
-    const raf = (time: number) => {
-      lenis.raf(time);
-      frame = requestAnimationFrame(raf);
-    };
-    frame = requestAnimationFrame(raf);
-
     const roleTimer = window.setInterval(
       () => setRoleIndex((index) => (index + 1) % roles.length),
       2500,
     );
 
-    gsap.fromTo(
-      ".hero-chip",
-      { y: 20, opacity: 0, scale: 0.9 },
-      { y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.1, ease: "back.out(1.7)" },
-    );
-
     return () => {
-      cancelAnimationFrame(frame);
       window.clearInterval(roleTimer);
-      lenis.destroy();
     };
   }, []);
 
   useEffect(() => {
-    const onMove = (event: MouseEvent) => {
-      mouseX.set(event.clientX);
-      mouseY.set(event.clientY);
-    };
     const onKey = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
@@ -455,13 +476,11 @@ export default function PortfolioExperience() {
         setMenuOpen(false);
       }
     };
-    window.addEventListener("mousemove", onMove, { passive: true });
     window.addEventListener("keydown", onKey);
     return () => {
-      window.removeEventListener("mousemove", onMove);
       window.removeEventListener("keydown", onKey);
     };
-  }, [mouseX, mouseY]);
+  }, []);
 
   async function submitContact(formData: FormData) {
     setContactStatus("Sending...");
@@ -488,22 +507,7 @@ export default function PortfolioExperience() {
     <main className="relative min-h-screen overflow-hidden bg-[#02040a] text-white">
       <div className="grid-mask pointer-events-none fixed inset-0 z-0" />
       
-      {/* Ambient Premium Glows */}
-      <motion.div
-        className="pointer-events-none fixed z-10 hidden size-[600px] rounded-full bg-sky-500/10 blur-[120px] mix-blend-screen md:block"
-        style={{ x: glowX, y: glowY }}
-      />
-      <div className="pointer-events-none fixed top-[-20%] left-[-10%] z-0 size-[800px] rounded-full bg-indigo-500/10 blur-[150px] mix-blend-screen" />
-      
-      {/* Custom Cursor */}
-      <motion.div
-        className="pointer-events-none fixed z-[100] hidden size-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky-300/50 bg-white/5 backdrop-blur-[2px] md:block"
-        style={{ x: cursorX, y: cursorY }}
-      />
-      <motion.div
-        className="pointer-events-none fixed z-[100] hidden size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-300 md:block"
-        style={{ x: cursorX, y: cursorY }}
-      />
+      <div className="pointer-events-none fixed top-[-20%] left-[-10%] z-0 size-[720px] rounded-full bg-sky-500/8 blur-[120px] mix-blend-screen" />
 
       <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/5 bg-[#02040a]/40 backdrop-blur-2xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -720,9 +724,9 @@ export default function PortfolioExperience() {
               <div className="absolute -inset-10 z-30 pointer-events-none hidden md:block">
                 {[
                   { text: "Data Science", top: "10%", left: "-10%", delay: 0 },
-                  { text: "AI & GenAI", top: "20%", right: "-5%", delay: 0.2 },
+                  { text: "AI & GenAI", top: "20%", right: "1%", delay: 0.2 },
                   { text: "Full Stack", bottom: "30%", left: "-15%", delay: 0.4 },
-                  { text: "Android", bottom: "15%", right: "-10%", delay: 0.6 }
+                  { text: "Android", bottom: "15%", right: "2%", delay: 0.6 }
                 ].map((item) => (
                   <motion.div
                     key={item.text}
@@ -770,8 +774,12 @@ export default function PortfolioExperience() {
               transition={{ duration: 0.8 }}
             >
               <Card className="depth-card h-full p-8 lg:p-12 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <Lottie animationData={orbitAnimation} loop className="mx-auto size-56 mb-8 drop-shadow-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-purple-500/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <div className="tech-orbit mx-auto mb-8">
+                  <span />
+                  <span />
+                  <span />
+                </div>
                 <h3 className="text-3xl font-bold text-white mb-6">Continuous Learner.</h3>
                 <p className="text-lg leading-relaxed text-slate-300 mb-6 font-medium">
                   I'm a developer who enjoys building practical projects and continuously learning new technologies. Most of my work revolves around frontend development, AI-based ideas, automation, and data analytics.
@@ -814,27 +822,8 @@ export default function PortfolioExperience() {
             copy="Equipped with the right tools to architect scalable backends, design beautiful frontends, and train intelligent models."
           />
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {skills.map(([name, copy, group], i) => (
-              <motion.div
-                key={name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: (i % 4) * 0.1 }}
-              >
-                <Card className="depth-card h-full p-6 flex flex-col justify-between group cursor-default">
-                  <div>
-                    <div className="mb-6 flex items-center justify-between">
-                      <span className="rounded-full border border-sky-400/20 bg-sky-400/10 px-3 py-1 text-xs font-bold tracking-wider uppercase text-sky-300">
-                        {group}
-                      </span>
-                      <Code2 size={20} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white group-hover:text-sky-300 transition-colors">{name}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-slate-400 group-hover:text-slate-300 transition-colors">{copy}</p>
-                  </div>
-                </Card>
-              </motion.div>
+            {skills.map((skill) => (
+              <SkillCard key={skill.name} skill={skill} />
             ))}
           </div>
         </div>
@@ -850,61 +839,7 @@ export default function PortfolioExperience() {
           />
           <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
             {projects.map((project, index) => (
-              <motion.div
-                key={project.title}
-                initial={{ opacity: 0, scale: 0.95, y: 40 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <Card className="depth-card group h-full flex flex-col overflow-hidden p-0 border border-white/10 bg-white/[0.02]">
-                  <div className="depth-card-img-wrapper relative h-56 overflow-hidden border-b border-white/10 bg-slate-950">
-                    <div className="absolute inset-0 bg-gradient-to-br from-sky-500/20 via-transparent to-purple-500/20 mix-blend-overlay group-hover:opacity-100 opacity-50 transition-opacity duration-500" />
-                    
-                    {/* Abstract Project Preview Graphic */}
-                    <div className="depth-card-img absolute inset-0 flex items-center justify-center p-6">
-                       <div className="w-full h-full rounded-xl border border-white/10 bg-black/40 backdrop-blur-md p-5 flex flex-col shadow-2xl">
-                          <div className="flex items-center justify-between mb-4">
-                            <span className="font-mono text-xs font-bold text-sky-400">{project.type}</span>
-                            <span className="text-xs font-bold text-slate-500">0{index + 1}</span>
-                          </div>
-                          <div className="h-2 w-full rounded-full bg-white/5 overflow-hidden mb-4">
-                            <div className="h-full w-2/3 bg-gradient-to-r from-sky-400 to-emerald-400 rounded-full" />
-                          </div>
-                          <div className="flex gap-2 mt-auto">
-                            <div className="h-10 w-1/3 rounded bg-white/5" />
-                            <div className="h-10 w-2/3 rounded bg-white/10" />
-                          </div>
-                       </div>
-                    </div>
-                  </div>
-                  <div className="p-8 flex flex-col flex-grow">
-                    <h3 className="text-2xl font-bold text-white group-hover:text-sky-300 transition-colors">{project.title}</h3>
-                    <p className="mt-4 text-sm leading-relaxed text-slate-400 flex-grow">
-                      {project.description}
-                    </p>
-                    <div className="mt-6 flex flex-wrap gap-2">
-                      {project.stack.map((tech) => (
-                        <span className="rounded-md border border-white/5 bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-300" key={tech}>
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="mt-8 flex gap-3">
-                      <a href={project.demo} className="flex-1">
-                        <Button className="w-full button-primary rounded-xl" size="sm">
-                          View Project <ExternalLink size={16} />
-                        </Button>
-                      </a>
-                      <a href={project.github} target="_blank" rel="noreferrer">
-                        <Button size="icon" variant="secondary" className="rounded-xl border border-white/10" aria-label={`${project.title} GitHub`}>
-                          <Code2 size={18} />
-                        </Button>
-                      </a>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
+              <ProjectCard key={project.title} project={project} index={index} />
             ))}
           </div>
         </div>

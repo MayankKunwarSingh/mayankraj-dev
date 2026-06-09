@@ -1,0 +1,18 @@
+
+> frontend@0.1.0 dev
+> next dev --hostname 127.0.0.1 --port 3000
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://127.0.0.1:3000
+- Network:       http://127.0.0.1:3000
+- Environments: .env.local
+✓ Ready in 721ms
+Creating turbopack project {
+  dir: 'C:\\Users\\mayan\\Desktop\\my website\\frontend',
+  testMode: true
+}
+
+ GET / 200 in 1719ms (next.js: 420ms, application-code: 1299ms)
+ GET / 200 in 411ms (next.js: 9ms, application-code: 401ms)
+ GET / 200 in 275ms (next.js: 8ms, application-code: 267ms)
+ GET / 200 in 311ms (next.js: 7ms, application-code: 304ms)

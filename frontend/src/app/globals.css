@@ -35,8 +35,11 @@ body::before {
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: 0.8;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.014) 1px, transparent 1px);
+  background-size: 4px 4px;
+  opacity: 0.2;
 }
 
 * {
@@ -82,6 +85,7 @@ a {
   }
 
   .hero-3d-scene {
+    opacity: 0.84;
     background:
       radial-gradient(circle at 72% 42%, rgba(56, 189, 248, 0.14), transparent 28%),
       radial-gradient(circle at 80% 58%, rgba(129, 140, 248, 0.12), transparent 34%),
@@ -128,26 +132,26 @@ a {
   /* Premium Depth Card - $50k feel */
   .depth-card {
     will-change: transform;
-    transform: perspective(1400px) translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
     transition:
-      transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
-      border-color 0.45s ease,
-      box-shadow 0.45s ease,
-      background 0.45s ease;
+      transform 0.28s ease,
+      border-color 0.28s ease,
+      box-shadow 0.28s ease,
+      background 0.28s ease;
     background:
       linear-gradient(145deg, rgba(56, 189, 248, 0.04), transparent 38%),
       linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.012) 100%);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(16px);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 22px rgba(0, 0, 0, 0.28);
   }
 
   .depth-card:hover {
-    transform: perspective(1400px) translateY(-8px) rotateX(2.4deg) rotateY(-2.8deg) translateZ(18px);
+    transform: translate3d(0, -5px, 0);
     border-color: rgba(125, 211, 252, 0.2);
     box-shadow:
-      0 40px 100px -20px rgba(0, 0, 0, 0.6),
-      0 0 54px -18px rgba(56, 189, 248, 0.2),
+      0 24px 60px -24px rgba(0, 0, 0, 0.72),
+      0 0 36px -24px rgba(56, 189, 248, 0.24),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
@@ -182,12 +186,14 @@ a {
       linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
       var(--panel);
     box-shadow:
-      0 30px 60px rgba(0, 0, 0, 0.4),
+      0 22px 48px rgba(0, 0, 0, 0.34),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(24px) saturate(150%);
-    -webkit-backdrop-filter: blur(24px) saturate(150%);
-    transform-style: preserve-3d;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    backdrop-filter: blur(10px) saturate(130%);
+    -webkit-backdrop-filter: blur(10px) saturate(130%);
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease,
+      transform 0.25s ease;
   }
 
   .glass:hover {
@@ -244,7 +250,7 @@ a {
   }
 
   .button:hover {
-    transform: translateY(-3px) scale(1.02);
+    transform: translateY(-2px);
     box-shadow:
       0 20px 40px -10px rgba(0, 0, 0, 0.5),
       0 0 20px rgba(56, 189, 248, 0.3);
@@ -315,9 +321,99 @@ a {
     background-image: linear-gradient(135deg, var(--accent-1), var(--accent-3));
   }
 
+  .skill-card,
+  .project-card {
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background:
+      linear-gradient(145deg, rgba(56, 189, 248, 0.055), rgba(255, 255, 255, 0.018) 44%),
+      rgba(8, 13, 27, 0.66);
+    box-shadow: 0 18px 48px -30px rgba(0, 0, 0, 0.85);
+    transition:
+      transform 0.24s ease,
+      border-color 0.24s ease,
+      background 0.24s ease,
+      box-shadow 0.24s ease;
+    will-change: transform;
+  }
+
+  .skill-card:hover,
+  .project-card:hover {
+    transform: translate3d(0, -5px, 0);
+    border-color: rgba(125, 211, 252, 0.22);
+    background:
+      linear-gradient(145deg, rgba(56, 189, 248, 0.08), rgba(255, 255, 255, 0.026) 44%),
+      rgba(8, 13, 27, 0.76);
+    box-shadow:
+      0 28px 64px -34px rgba(0, 0, 0, 0.9),
+      0 0 36px -26px rgba(56, 189, 248, 0.44);
+  }
+
+  .skill-logo,
+  .project-preview {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .skill-card:hover .skill-logo {
+    transform: translate3d(0, -2px, 0) scale(1.04);
+    transition: transform 0.24s ease;
+  }
+
+  .tech-orbit {
+    position: relative;
+    display: grid;
+    width: 12rem;
+    height: 12rem;
+    place-items: center;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle, rgba(56, 189, 248, 0.14), transparent 48%),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(125, 211, 252, 0.16);
+  }
+
+  .tech-orbit::before,
+  .tech-orbit::after,
+  .tech-orbit span {
+    content: "";
+    position: absolute;
+    border-radius: 999px;
+    border: 1px solid rgba(125, 211, 252, 0.22);
+  }
+
+  .tech-orbit::before {
+    inset: 2rem;
+  }
+
+  .tech-orbit::after {
+    width: 4rem;
+    height: 4rem;
+    background: rgba(56, 189, 248, 0.16);
+    border-color: rgba(125, 211, 252, 0.28);
+    box-shadow: 0 0 42px rgba(56, 189, 248, 0.2);
+  }
+
+  .tech-orbit span:nth-child(1) {
+    width: 9rem;
+    height: 9rem;
+  }
+
+  .tech-orbit span:nth-child(2) {
+    width: 6.5rem;
+    height: 6.5rem;
+    border-color: rgba(192, 132, 252, 0.2);
+  }
+
+  .tech-orbit span:nth-child(3) {
+    width: 0.65rem;
+    height: 0.65rem;
+    transform: translate3d(3.25rem, -2.5rem, 0);
+    background: #38bdf8;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.65);
+  }
+
   @media (max-width: 767px) {
     .hero-3d-scene {
-      opacity: 0.58;
+      opacity: 0.32;
       background:
         radial-gradient(circle at 50% 28%, rgba(56, 189, 248, 0.14), transparent 34%),
         linear-gradient(180deg, rgba(2, 4, 10, 0.16), rgba(2, 4, 10, 0.88));
@@ -335,7 +431,12 @@ a {
 
     .depth-card,
     .depth-card:hover {
-      transform: translateY(-4px);
+      transform: none;
+    }
+
+    .skill-card:hover,
+    .project-card:hover {
+      transform: none;
     }
 
     .hero-copy-depth > * {
@@ -345,6 +446,21 @@ a {
     .button-default {
       min-height: 2.75rem;
       padding: 0 1.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+
+    .grid-mask {
+      animation: none;
     }
   }
 }
